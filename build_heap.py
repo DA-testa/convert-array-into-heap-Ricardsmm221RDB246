@@ -1,15 +1,22 @@
-import heapq
+from queue import PriorityQueue
 
 def parallel_processing(n, m, data):
-    threads = [(0, i) for i in range(n)]  # initialize each thread with start time 0
-    heapq.heapify(threads)  # convert the list into a heap
-    
     output = []
+    next_thread = 0
+    threads = PriorityQueue()
+
+    for i in range(n):
+        threads.put((0, i))
+
     for i in range(m):
-        time, thread = heapq.heappop(threads)  # get the earliest available thread
-        output.append((thread, time))
-        heapq.heappush(threads, (time + data[i], thread))  # add the job duration to the thread's start time
-    
+        time_required = data[i]
+        thread_start_time, thread_number = threads.get()
+
+        output.append((thread_number, thread_start_time))
+
+        thread_finish_time = thread_start_time + time_required
+        threads.put((thread_finish_time, thread_number))
+
     return output
 
 def main():
@@ -21,4 +28,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
