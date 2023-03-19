@@ -1,31 +1,42 @@
-import heapq
+def heapify(data, n, i, swaps):
+    smallest = i
+    left = 2 * i + 1
+    right = 2 * i + 2
 
-class Worker:
-    def __init__(self, index):
-        self.index = index
-        self.next_free_time = 0
+    if left < n and data[left] < data[smallest]:
+        smallest = left
 
-    def __lt__(self, other):
-        return self.next_free_time < other.next_free_time
+    if right < n and data[right] < data[smallest]:
+        smallest = right
 
-    def assign_job(self, job_duration, current_time):
-        self.next_free_time = current_time + job_duration
+    if smallest != i:
+        data[i], data[smallest] = data[smallest], data[i]
+        swaps.append((i, smallest))
+        heapify(data, n, smallest, swaps)
 
-def assign_jobs(n_workers, jobs):
-    worker_queue = [Worker(i) for i in range(n_workers)]
-    result = []
-    for job_index, job_duration in enumerate(jobs):
-        worker = heapq.heappop(worker_queue)
-        result.append((worker.index, worker.next_free_time))
-        worker.assign_job(job_duration, worker.next_free_time)
-        heapq.heappush(worker_queue, worker)
-    return result
 
-n_workers, n_jobs = map(int, input().split())
-jobs = list(map(int, input().split()))
+def build_heap(data, n):
+    swaps = []
+    # We start the loop from n//2 - 1 instead of n//2 because the last element in the array 
+    # will already be a heap of size 1, so we don't need to heapify it separately.
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(data, n, i, swaps)
 
-assigned_jobs = assign_jobs(n_workers, jobs)
+    return swaps
 
-for job in assigned_jobs:
-    print(job[0], job[1])
 
+def main():
+    try:
+        n = int(input())
+        data = list(map(int, input().split()))
+
+        assert len(data) == n
+
+        swaps = build_heap(data, n)
+
+        print(len(swaps))
+        for swap in swaps:
+            print(swap[0], swap[1])
+
+    except Exception as e:
+        print(f"Error: {e}")
