@@ -16,11 +16,9 @@ def heapify(data, n, i, swaps):
 
 
 def build_heap(data, n):
-   
     swaps = []
     for i in range(n // 2, -1, -1):
         heapify(data, n, i, swaps)
-
     return swaps
 
 
@@ -43,4 +41,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
