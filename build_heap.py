@@ -1,29 +1,35 @@
-from queue import PriorityQueue
+def build_heap(data):
+    swaps = []
+    n = len(data)
+    for i in range(n // 2 - 1, -1, -1):
+        min_heapify(data, i, swaps)
+    return swaps
 
-def parallel_processing(n, m, data):
-    output = []
-    next_thread = 0
-    threads = PriorityQueue()
+def min_heapify(data, i, swaps):
+    n = len(data)
+    smallest = i
+    left_child = 2 * i + 1
+    right_child = 2 * i + 2
 
-    for i in range(n):
-        threads.put((0, i))
+    if left_child < n and data[left_child] < data[smallest]:
+        smallest = left_child
 
-    for i in range(m):
-        time_required = data[i]
-        thread_start_time, thread_number = threads.get()
+    if right_child < n and data[right_child] < data[smallest]:
+        smallest = right_child
 
-        output.append((thread_number, thread_start_time))
+    if i != smallest:
+        swaps.append((i, smallest))
+        data[i], data[smallest] = data[smallest], data[i]
+        min_heapify(data, smallest, swaps)
 
-        thread_finish_time = thread_start_time + time_required
-        threads.put((thread_finish_time, thread_number))
-
-    return output
-
-def main():
-    n, m = map(int, input().split())
+def main(): 
+    n = int(input())
     data = list(map(int, input().split()))
-    result = parallel_processing(n, m, data)
-    for i, j in result:
+    assert len(data) == n
+
+    swaps = build_heap(data)
+    print(len(swaps))
+    for i, j in swaps:
         print(i, j)
 
 if __name__ == "__main__":
