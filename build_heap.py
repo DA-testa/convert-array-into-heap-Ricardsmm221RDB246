@@ -1,42 +1,37 @@
-def heapify(data, n, i, swaps):
-    smallest = i
-    left = 2 * i + 1
-    right = 2 * i + 2
-
-    if left < n and data[left] < data[smallest]:
-        smallest = left
-
-    if right < n and data[right] < data[smallest]:
-        smallest = right
-
-    if smallest != i:
-        data[i], data[smallest] = data[smallest], data[i]
-        swaps.append((i, smallest))
-        heapify(data, n, smallest, swaps)
-
-
-def build_heap(data, n):
+def build_heap(data):
     swaps = []
-    # We start the loop from n//2 - 1 instead of n//2 because the last element in the array 
-    # will already be a heap of size 1, so we don't need to heapify it separately.
+    n = len(data)
     for i in range(n // 2 - 1, -1, -1):
-        heapify(data, n, i, swaps)
-
+        min_heapify(data, i, swaps)
     return swaps
 
+def min_heapify(data, i, swaps):
+    n = len(data)
+    smallest = i
+    left_child = 2 * i + 1
+    right_child = 2 * i + 2
 
-def main():
-    try:
-        n = int(input())
-        data = list(map(int, input().split()))
+    if left_child < n and data[left_child] < data[smallest]:
+        smallest = left_child
 
-        assert len(data) == n
+    if right_child < n and data[right_child] < data[smallest]:
+        smallest = right_child
 
-        swaps = build_heap(data, n)
+    if i != smallest:
+        swaps.append((i, smallest))
+        data[i], data[smallest] = data[smallest], data[i]
+        min_heapify(data, smallest, swaps)
 
-        print(len(swaps))
-        for swap in swaps:
-            print(swap[0], swap[1])
+def main(): 
+    n = int(input())
+    data = list(map(int, input().split()))
+    assert len(data) == n
 
-    except Exception as e:
-        print(f"Error: {e}")
+    swaps = build_heap(data)
+    print(len(swaps))
+    for i, j in swaps:
+        print(i, j)
+
+if __name__ == "__main__":
+    main()
+
