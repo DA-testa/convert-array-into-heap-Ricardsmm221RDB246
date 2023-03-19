@@ -1,46 +1,24 @@
-def heapify(data, n, i, swaps):
-    smallest = i
-    left = 2 * i + 1
-    right = 2 * i + 2
+import heapq
 
-    if left < n and data[left] < data[smallest]:
-        smallest = left
-
-    if right < n and data[right] < data[smallest]:
-        smallest = right
-
-    if smallest != i:
-        data[i], data[smallest] = data[smallest], data[i]
-        swaps.append((i, smallest))
-        heapify(data, n, smallest, swaps)
-
-
-def build_heap(data, n):
-    swaps = []
-    # We start the loop from n//2 - 1 instead of n//2 because the last element in the array 
-    # will already be a heap of size 1, so we don't need to heapify it separately.
-    for i in range(n // 2 - 1, -1, -1):
-        heapify(data, n, i, swaps)
-
-    return swaps
-
+def parallel_processing(n, m, data):
+    threads = [(0, i) for i in range(n)]  # initialize each thread with start time 0
+    heapq.heapify(threads)  # convert the list into a heap
+    
+    output = []
+    for i in range(m):
+        time, thread = heapq.heappop(threads)  # get the earliest available thread
+        output.append((thread, time))
+        heapq.heappush(threads, (time + data[i], thread))  # add the job duration to the thread's start time
+    
+    return output
 
 def main():
-    try:
-        n = int(input())
-        data = list(map(int, input().split()))
-
-        assert len(data) == n
-
-        swaps = build_heap(data, n)
-
-        print(len(swaps))
-        for swap in swaps:
-            print(swap[0], swap[1])
-
-    except Exception as e:
-        print(f"Error: {e}")
-
+    n, m = map(int, input().split())
+    data = list(map(int, input().split()))
+    result = parallel_processing(n, m, data)
+    for i, j in result:
+        print(i, j)
 
 if __name__ == "__main__":
-    main() 
+    main()
+
