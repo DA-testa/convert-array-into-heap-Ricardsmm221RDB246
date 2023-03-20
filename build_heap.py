@@ -1,54 +1,31 @@
-def build_heap(data):
-    swaps = []
-    n = len(data)
-    for i in range(n // 2 - 1, -1, -1):
-        current, left_child, right_child = i, 2*i+1, 2*i+2
-        while left_child < n:
-            smallest_child = left_child if (right_child >= n or data[left_child] < data[right_child]) else right_child
-            if data[current] > data[smallest_child]:
-                swaps.append((current, smallest_child))
-                data[current], data[smallest_child] = data[smallest_child], data[current]
-                current, left_child, right_child = smallest_child, 2*smallest_child+1, 2*smallest_child+2
-            else:
-                break
-    return swaps
+import heapq as hq
+
+def assign_jobs(n, jobs):
+    assigned_workers = []
+    start_times = []
+    next_free_time = [(0, i) for i in range(n)]
+    hq.heapify(next_free_time)
+    for job in jobs:
+        next_worker = hq.heappop(next_free_time)
+        start_time = next_worker[0]
+        worker_index = next_worker[1]
+        assigned_workers.append(worker_index)
+        start_times.append(start_time)
+        hq.heappush(next_free_time, (start_time + job, worker_index))
+    return assigned_workers, start_times
 
 
-def main(): 
-    Input = input() 
-    if "I" in Input:
-        n = int(input())
-        data = list(map(int, input().split()))
-        assert len(data) == n
+def main():
+    n, m = map(int, input().split())
+    jobs = list(map(int, input().split()))
+    assert m == len(jobs)
 
-        swaps = build_heap(data)
-        print(len(swaps))
+    assigned_workers, start_times = assign_jobs(n, jobs)
 
-    elif "S" in Input:
-        n = int(input())
-        data = list(map(int, input().split()))
-        assert len(data) == n
-
-        for i in range(n):
-            swaps = build_heap(data[:n-i])
-            for swap in swaps:
-                print(swap[0], swap[1])
-            data[0], data[n-i-1] = data[n-i-1], data[0]
-        print(" ".join(map(str, data)))
-        
-    if "F" in Input:  
-        filepath = "tests/" + input() 
-        with open(filepath, 'r') as file:
-            n = int(file.readline().strip())
-            data = list(map(int, file.readline().strip().split()))
-            assert len(data) == n
-            
-    swaps = build_heap(data)
-    print(len(swaps))
-    for i, j in swaps:
-        print(i, j)
+    for i in range(m):
+        print(assigned_workers[i], start_times[i])
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
 
